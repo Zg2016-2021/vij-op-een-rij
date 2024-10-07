@@ -1,10 +1,18 @@
 import pygame
 import sys
 
-# Initialize Pygame
 pygame.init()
+pygame.mixer.init(frequency=44100, size=-16)
+sound1 = pygame.mixer.Sound(r"C:\Users\GZ980\Desktop\Basecamp\音乐\winnar_music.mp3")
+sound2 = pygame.mixer.Sound(r"C:\Users\GZ980\Desktop\Basecamp\音乐\music41.mp3")
 
-# Constants
+sound1.set_volume(0.50)
+sound2.set_volume(0.15)
+
+channel1 = sound1.play()
+channel2 = sound2.play()
+
+
 BOARD_SIZE = 15
 CELL_SIZE = 40
 MARGIN = 20
@@ -144,6 +152,10 @@ def game_over_screen(winner):
     text = font.render(msg, True, (255, 0, 0))
     text_rect = text.get_rect(center=(WIDTH // 2, MARGIN // 2))
     screen.blit(text, text_rect)
+
+    sound2.stop()
+    sound1.play()
+
     # Draw "Home" and "Restart" buttons
     home_button = pygame.Rect((WIDTH // 2 - BUTTON_WIDTH - 20, HEIGHT - INFO_PANEL_HEIGHT + 20),
                               (BUTTON_WIDTH, BUTTON_HEIGHT))
@@ -152,6 +164,7 @@ def game_over_screen(winner):
     draw_button(home_button, "Home")
     draw_button(restart_button, "Herstart")
     return home_button, restart_button
+
 
 def draw_info_panel(current_player):
     # Draw a rectangle for the info panel
@@ -179,12 +192,17 @@ def main():
     while True:
         if current_state == STATE_MENU:
             start_button = main_menu()
+            sound1.stop()
+            
         elif current_state == STATE_PLAYING:
             draw_board()
             draw_stones(board)
             draw_info_panel(current_player)
+
         elif current_state == STATE_GAME_OVER:
             home_button, restart_button = game_over_screen(winner)
+            sound2.stop()
+            sound1.play()
 
         pygame.display.flip()
 
@@ -225,6 +243,7 @@ def main():
                     if home_button.collidepoint(pos):
                         # Return to main menu
                         current_state = STATE_MENU
+
                     elif restart_button.collidepoint(pos):
                         # Restart the game
                         current_state = STATE_PLAYING

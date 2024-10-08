@@ -3,14 +3,14 @@ import sys
 
 pygame.init()
 pygame.mixer.init(frequency=44100, size=-16)
-sound1 = pygame.mixer.Sound(r"C:\Users\GZ980\Desktop\Basecamp\音乐\winnar_music.mp3")
+winnarmusic = pygame.mixer.Sound(r"C:\Users\GZ980\Desktop\Basecamp\音乐\winnar_music.mp3")
 sound2 = pygame.mixer.Sound(r"C:\Users\GZ980\Desktop\Basecamp\音乐\music41.mp3")
 
-sound1.set_volume(0.50)
+winnarmusic.set_volume(0.50)
 sound2.set_volume(0.15)
 
-channel1 = sound1.play()
-channel2 = sound2.play()
+channel1 = winnarmusic.play()
+channel2 = sound2.play(-1)
 
 
 BOARD_SIZE = 15
@@ -139,6 +139,8 @@ def main_menu():
     start_button = pygame.Rect((WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT // 2 - BUTTON_HEIGHT // 2),
                                (BUTTON_WIDTH, BUTTON_HEIGHT))
     draw_button(start_button, "Start")
+    ###
+    ###
     return start_button
 
 def game_over_screen(winner):
@@ -152,9 +154,10 @@ def game_over_screen(winner):
     text = font.render(msg, True, (255, 0, 0))
     text_rect = text.get_rect(center=(WIDTH // 2, MARGIN // 2))
     screen.blit(text, text_rect)
-
+    ###
     sound2.stop()
-    sound1.play()
+    winnarmusic.play()
+    ###???为什么此处无杂音
 
     # Draw "Home" and "Restart" buttons
     home_button = pygame.Rect((WIDTH // 2 - BUTTON_WIDTH - 20, HEIGHT - INFO_PANEL_HEIGHT + 20),
@@ -192,18 +195,34 @@ def main():
     while True:
         if current_state == STATE_MENU:
             start_button = main_menu()
-            sound1.stop()
-            
+            ###
+            if not pygame.mixer.get_busy():
+                sound2.play()
+            elif pygame.mixer.get_busy():
+                winnarmusic.stop()    
+            ###
+
         elif current_state == STATE_PLAYING:
             draw_board()
             draw_stones(board)
             draw_info_panel(current_player)
 
+            ###
+            if not pygame.mixer.get_busy():
+                sound2.play()
+            elif pygame.mixer.get_busy():
+                winnarmusic.stop()   
+            ###
+
         elif current_state == STATE_GAME_OVER:
             home_button, restart_button = game_over_screen(winner)
-            sound2.stop()
-            sound1.play()
-
+            ###
+            if not pygame.mixer.get_busy():
+                winnarmusic.play()
+            elif pygame.mixer.get_busy():
+                sound2.stop()
+                winnarmusic.play()
+            ###
         pygame.display.flip()
 
         for event in pygame.event.get():
@@ -251,6 +270,7 @@ def main():
                         current_player = 1
                         game_over = False
                         winner = None
+
 
         pygame.time.Clock().tick(30)
 

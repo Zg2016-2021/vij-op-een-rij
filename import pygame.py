@@ -1,17 +1,24 @@
 import pygame
 import sys
+import os
+
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+winnarmusic_path = os.path.join(script_dir, 'music', 'winnar_music.mp3')
+sound2_path = os.path.join(script_dir, 'music', 'music41.mp3')
 
 pygame.init()
 pygame.mixer.init(frequency=44100, size=-16)
-winnarmusic = pygame.mixer.Sound(r"C:\Users\GZ980\Desktop\Basecamp\音乐\winnar_music.mp3")
-sound2 = pygame.mixer.Sound(r"C:\Users\GZ980\Desktop\Basecamp\音乐\music41.mp3")
+
+winnarmusic = pygame.mixer.Sound(winnarmusic_path)
+sound2 = pygame.mixer.Sound(sound2_path)
 
 winnarmusic.set_volume(0.50)
 sound2.set_volume(0.15)
 
 channel1 = winnarmusic.play()
 channel2 = sound2.play(-1)
-
 
 BOARD_SIZE = 15
 CELL_SIZE = 40
